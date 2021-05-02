@@ -2,7 +2,7 @@ package com.socialsitebackend.socialsite.controller;
 
 import com.socialsitebackend.socialsite.dto.AuthToken;
 import com.socialsitebackend.socialsite.dto.LoginRequestDto;
-import com.socialsitebackend.socialsite.dto.UserRequestDto;
+import com.socialsitebackend.socialsite.dto.UserRegisterRequestDto;
 import com.socialsitebackend.socialsite.model.User;
 import com.socialsitebackend.socialsite.security.TokenProvider;
 import com.socialsitebackend.socialsite.service.UserService;
@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @RequestMapping(value="/register", method = RequestMethod.POST)
-    public User saveUser(@RequestBody UserRequestDto user){
+    public User saveUser(@RequestBody UserRegisterRequestDto user){
         return userService.save(user);
     }
 
