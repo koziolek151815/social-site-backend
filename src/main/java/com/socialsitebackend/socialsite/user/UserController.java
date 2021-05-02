@@ -2,9 +2,11 @@ package com.socialsitebackend.socialsite.user;
 
 import com.socialsitebackend.socialsite.entities.UserEntity;
 import com.socialsitebackend.socialsite.config.security.TokenProvider;
+import com.socialsitebackend.socialsite.exceptions.UserNotFoundException;
 import com.socialsitebackend.socialsite.user.dto.AuthToken;
 import com.socialsitebackend.socialsite.user.dto.UserLoginRequestDto;
 import com.socialsitebackend.socialsite.user.dto.UserRegisterRequestDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,16 +33,24 @@ public class UserController {
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
     public ResponseEntity<?> generateToken(@RequestBody UserLoginRequestDto loginUser) throws AuthenticationException {
+        try {
+            final Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginUser.getUsername(),
+                            loginUser.getPassword()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            final String token = jwtTokenUtil.generateToken(authentication);
+            return ResponseEntity.ok(new AuthToken(token));
 
-        final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginUser.getUsername(),
-                        loginUser.getPassword()
-                )
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        final String token = jwtTokenUtil.generateToken(authentication);
-        return ResponseEntity.ok(new AuthToken(token));
+        } catch (UserNotFoundException | AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
+        }  catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+        }
+
+
     }
 
     @RequestMapping(value="/register", method = RequestMethod.POST)

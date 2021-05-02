@@ -1,6 +1,7 @@
 package com.socialsitebackend.socialsite.post;
 
 
+import com.socialsitebackend.socialsite.exceptions.PostNotFoundException;
 import com.socialsitebackend.socialsite.post.dto.AddPostDto;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
 import org.springframework.data.domain.Page;
@@ -35,8 +36,14 @@ public class PostController {
     }
 
     @RequestMapping(value="/getById", method = RequestMethod.GET)
-    ResponseEntity<PostResponseDto> getPostById(@RequestParam Long postId) {
-        return ResponseEntity.status(HttpStatus.OK).body(postService.getPost(postId));
+    ResponseEntity<?> getPostById(@RequestParam Long postId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(postService.getPostById(postId));
+        } catch (PostNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+        }
     }
 
 

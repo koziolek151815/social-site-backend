@@ -3,6 +3,7 @@ package com.socialsitebackend.socialsite.post;
 
 import com.socialsitebackend.socialsite.entities.PostEntity;
 import com.socialsitebackend.socialsite.entities.UserEntity;
+import com.socialsitebackend.socialsite.exceptions.PostNotFoundException;
 import com.socialsitebackend.socialsite.post.dto.AddPostDto;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
 import com.socialsitebackend.socialsite.user.UserService;
@@ -38,8 +39,11 @@ public class PostService {
     }
 
 
-    public PostResponseDto getPost(Long postId) {
-        return postFactory.entityToResponseDto(postRepository.findById(postId).get());
+    public PostResponseDto getPostById(Long postId) {
+        return postFactory.entityToResponseDto(
+                postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId))
+        );
     }
 
     @Transactional

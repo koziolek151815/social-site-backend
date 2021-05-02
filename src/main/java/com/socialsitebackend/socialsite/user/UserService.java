@@ -30,11 +30,10 @@ public class UserService implements UserDetailsService {
         this.factory = factory;
     }
 
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByUsername(username);
-        if(user == null){
-            throw new UsernameNotFoundException("Invalid username or password.");
-        }
+    public UserDetails loadUserByUsername(String username) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), getAuthority(user));
     }
 
@@ -49,7 +48,8 @@ public class UserService implements UserDetailsService {
     public UserEntity getCurrentUser() {
         org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) SecurityContextHolder.
                 getContext().getAuthentication().getPrincipal();
-        return userRepository.findByUsername(principal.getUsername());
+        return userRepository.findByUsername(principal.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException(principal.getUsername()));
     }
 
     public UserEntity save(UserRegisterRequestDto userRegisterDto) {
