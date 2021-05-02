@@ -2,6 +2,7 @@ package com.socialsitebackend.socialsite.user;
 
 
 import com.socialsitebackend.socialsite.entities.UserEntity;
+import com.socialsitebackend.socialsite.user.dto.UserBasicProfileInfoDto;
 import com.socialsitebackend.socialsite.user.dto.UserProfileDto;
 import com.socialsitebackend.socialsite.user.dto.UserRegisterRequestDto;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,6 +42,13 @@ public class UserFactory {
                 .gender(entity.getGender())
                 .profileDescription(entity.getProfileDescription())
                 .avatarUrl(entity.getAvatarUrl())
+                .build();
+    }
+
+    public UserBasicProfileInfoDto entityToBasicUserProfileInfoDto(UserEntity entity) {
+        return UserBasicProfileInfoDto.builder()
+                .id(entity.getId())
+                .username(entity.getUsername())
                 .build();
     }
 }

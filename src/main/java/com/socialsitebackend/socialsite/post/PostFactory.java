@@ -20,11 +20,12 @@ public class PostFactory {
 
     public PostResponseDto entityToResponseDto(PostEntity entity) {
         return PostResponseDto.builder()
+                .postId(entity.getPostId())
                 .description(entity.getDescription())
                 .photoUrl(entity.getPhotoUrl())
                 .postCreatedDate(entity.getPostCreatedDate())
                 .title(entity.getTitle())
-                .userDto( userFactory.entityToUserProfileDto(entity.getPostAuthor()) )
+                .postAuthor( userFactory.entityToBasicUserProfileInfoDto(entity.getPostAuthor()) )
                 .build();
     }
 
