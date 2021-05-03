@@ -1,8 +1,7 @@
-package com.socialsitebackend.socialsite.service;
+package com.socialsitebackend.socialsite.role;
 
 
-import com.socialsitebackend.socialsite.model.Role;
-import com.socialsitebackend.socialsite.repository.RoleRepository;
+import com.socialsitebackend.socialsite.entities.Role;
 import org.springframework.stereotype.Service;
 
 @Service(value = "roleService")

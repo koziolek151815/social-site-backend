@@ -1,17 +1,20 @@
-package com.socialsitebackend.socialsite.model;
+package com.socialsitebackend.socialsite.entities;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Set;
 
+@Builder
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
- public class User {
+ public class UserEntity {
 
     @Id
     @GeneratedValue
@@ -19,6 +22,12 @@ import java.util.Set;
     private String username;
     private String password;
     private String email;
+
+
+    private LocalDateTime userCreatedDate;
+    private String avatarUrl;
+    private String gender;
+    private String profileDescription;
 
 
    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -29,5 +38,11 @@ import java.util.Set;
            inverseJoinColumns = {
                    @JoinColumn(name = "ROLE_ID") })
    private Set<Role> roles;
+
+
+    @PrePersist
+    void createdAt() {
+        this.userCreatedDate = LocalDateTime.now();
+    }
 
 }

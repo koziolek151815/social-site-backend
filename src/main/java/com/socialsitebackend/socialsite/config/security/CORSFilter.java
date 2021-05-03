@@ -1,4 +1,4 @@
-package com.socialsitebackend.socialsite.security;
+package com.socialsitebackend.socialsite.config.security;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;

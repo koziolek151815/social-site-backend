@@ -1,11 +1,11 @@
-package com.socialsitebackend.socialsite.controller;
+package com.socialsitebackend.socialsite.user;
 
-import com.socialsitebackend.socialsite.dto.AuthToken;
-import com.socialsitebackend.socialsite.dto.LoginRequestDto;
-import com.socialsitebackend.socialsite.dto.UserRequestDto;
-import com.socialsitebackend.socialsite.model.User;
-import com.socialsitebackend.socialsite.security.TokenProvider;
-import com.socialsitebackend.socialsite.service.UserService;
+import com.socialsitebackend.socialsite.entities.UserEntity;
+import com.socialsitebackend.socialsite.config.security.TokenProvider;
+import com.socialsitebackend.socialsite.user.dto.AuthToken;
+import com.socialsitebackend.socialsite.user.dto.UserLoginRequestDto;
+import com.socialsitebackend.socialsite.user.dto.UserRegisterRequestDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,21 +31,29 @@ public class UserController {
     }
 
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<?> generateToken(@RequestBody LoginRequestDto loginUser) throws AuthenticationException {
+    public ResponseEntity<?> generateToken(@RequestBody UserLoginRequestDto loginUser) throws AuthenticationException {
+        try {
+            final Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginUser.getEmail(),
+                            loginUser.getPassword()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            final String token = jwtTokenUtil.generateToken(authentication);
+            return ResponseEntity.ok(new AuthToken(token));
 
-        final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginUser.getUsername(),
-                        loginUser.getPassword()
-                )
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        final String token = jwtTokenUtil.generateToken(authentication);
-        return ResponseEntity.ok(new AuthToken(token));
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }  catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+
     }
 
     @RequestMapping(value="/register", method = RequestMethod.POST)
-    public User saveUser(@RequestBody UserRequestDto user){
+    public UserEntity saveUser(@RequestBody UserRegisterRequestDto user){
         return userService.save(user);
     }
 

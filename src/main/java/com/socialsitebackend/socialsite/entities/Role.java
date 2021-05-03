@@ -1,4 +1,4 @@
-package com.socialsitebackend.socialsite.model;
+package com.socialsitebackend.socialsite.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

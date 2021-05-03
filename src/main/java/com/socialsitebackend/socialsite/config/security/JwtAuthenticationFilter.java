@@ -1,4 +1,4 @@
-package com.socialsitebackend.socialsite.security;
+package com.socialsitebackend.socialsite.config.security;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
 import org.springframework.beans.factory.annotation.Autowired;

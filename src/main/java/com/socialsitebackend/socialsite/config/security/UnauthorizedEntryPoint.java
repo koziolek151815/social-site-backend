@@ -1,4 +1,4 @@
-package com.socialsitebackend.socialsite.security;
+package com.socialsitebackend.socialsite.config.security;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
