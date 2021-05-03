@@ -2,7 +2,6 @@ package com.socialsitebackend.socialsite.user;
 
 import com.socialsitebackend.socialsite.entities.UserEntity;
 import com.socialsitebackend.socialsite.config.security.TokenProvider;
-import com.socialsitebackend.socialsite.exceptions.UserNotFoundException;
 import com.socialsitebackend.socialsite.user.dto.AuthToken;
 import com.socialsitebackend.socialsite.user.dto.UserLoginRequestDto;
 import com.socialsitebackend.socialsite.user.dto.UserRegisterRequestDto;
@@ -36,7 +35,7 @@ public class UserController {
         try {
             final Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginUser.getUsername(),
+                            loginUser.getEmail(),
                             loginUser.getPassword()
                     )
             );
@@ -44,7 +43,7 @@ public class UserController {
             final String token = jwtTokenUtil.generateToken(authentication);
             return ResponseEntity.ok(new AuthToken(token));
 
-        } catch (UserNotFoundException | AuthenticationException e) {
+        } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }  catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
