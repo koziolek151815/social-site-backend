@@ -40,9 +40,9 @@ public class PostController {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(postService.getPostById(postId));
         } catch (PostNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
