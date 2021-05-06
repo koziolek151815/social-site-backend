@@ -24,7 +24,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "site_users")
+@Entity(name = "users")
 public class UserEntity {
 
     @Id
