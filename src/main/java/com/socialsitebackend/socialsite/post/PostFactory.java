@@ -6,26 +6,25 @@ import com.socialsitebackend.socialsite.post.dto.AddPostDto;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
 import com.socialsitebackend.socialsite.user.UserFactory;
 
+import lombok.RequiredArgsConstructor;
+
 import java.time.LocalDateTime;
 
 
+@RequiredArgsConstructor
 public class PostFactory {
 
     private final UserFactory userFactory;
 
-    public PostFactory(UserFactory userFactory) {
-        this.userFactory = userFactory;
-    }
-
 
     public PostResponseDto entityToResponseDto(PostEntity entity) {
         return PostResponseDto.builder()
-                .postId(entity.getPostId())
+                .postId(entity.getId())
                 .description(entity.getDescription())
                 .photoUrl(entity.getPhotoUrl())
                 .postCreatedDate(entity.getPostCreatedDate())
                 .title(entity.getTitle())
-                .postAuthor( userFactory.entityToBasicUserProfileInfoDto(entity.getPostAuthor()) )
+                .postAuthor(userFactory.entityToBasicUserProfileInfoDto(entity.getAuthor()))
                 .build();
     }
 
@@ -34,10 +33,8 @@ public class PostFactory {
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 .photoUrl(dto.getPhotoUrl())
-
                 .postCreatedDate(LocalDateTime.now())
-                .postAuthor(postAuthor)
+                .author(postAuthor)
                 .build();
-
     }
 }

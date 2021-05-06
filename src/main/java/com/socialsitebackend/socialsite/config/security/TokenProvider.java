@@ -1,5 +1,11 @@
 package com.socialsitebackend.socialsite.config.security;
-import io.jsonwebtoken.*;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,6 +20,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+
 @Component
 public class TokenProvider implements Serializable {
 
@@ -48,6 +56,7 @@ public class TokenProvider implements Serializable {
 
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
+
         return expiration.before(new Date());
     }
 
@@ -60,18 +69,18 @@ public class TokenProvider implements Serializable {
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY*1000))
+                .setExpiration(new Date(System.currentTimeMillis() + TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS256, SIGNING_KEY)
                 .compact();
     }
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
+
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     UsernamePasswordAuthenticationToken getAuthenticationToken(final String token, final Authentication existingAuth, final UserDetails userDetails) {
-
         final JwtParser jwtParser = Jwts.parser().setSigningKey(SIGNING_KEY);
 
         final Jws<Claims> claimsJws = jwtParser.parseClaimsJws(token);
@@ -85,5 +94,4 @@ public class TokenProvider implements Serializable {
 
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }
-
 }
