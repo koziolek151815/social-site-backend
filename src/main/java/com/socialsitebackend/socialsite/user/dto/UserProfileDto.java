@@ -5,9 +5,11 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+
 @Builder
 @Data
 public class UserProfileDto {
+
     private Long id;
     private String username;
     private String email;
@@ -17,4 +19,5 @@ public class UserProfileDto {
     private String avatarUrl;
     private String gender;
     private String profileDescription;
+
 }

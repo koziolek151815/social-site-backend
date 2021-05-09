@@ -1,12 +1,13 @@
 package com.socialsitebackend.socialsite.role;
 
-
-import com.socialsitebackend.socialsite.entities.Role;
+import com.socialsitebackend.socialsite.entities.RoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+
 @Repository
-public interface RoleRepository extends JpaRepository<Role, Long> {
-    Role findRoleByName(String name);
+public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
+
+    RoleEntity findRoleByName(String name);
 
 }
