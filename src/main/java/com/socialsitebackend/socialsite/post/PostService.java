@@ -46,12 +46,21 @@ public class PostService {
         );
     }
 
-    @Transactional
-    public PostResponseDto createPost(AddPostDto dto) {
-        UserEntity user = userService.getCurrentUser();
-        PostEntity postEntity = postRepository.save(postFactory.addPostDtoToEntity(dto, user));
+    public PostEntity getParentPostEntityById(Long postId){
+        if(postId == null) {return null;}
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+    }
 
-        return postFactory.entityToResponseDto(postEntity);
+    @Transactional
+    public PostResponseDto createPost(AddPostDto dto, Long parentPostId) {
+        UserEntity user = userService.getCurrentUser();
+        PostEntity parentPostEntity = getParentPostEntityById(parentPostId);
+
+        PostEntity newPostEntity = postRepository.save(postFactory.addPostDtoToEntity(dto, user, parentPostEntity));
+        updateParentPost(parentPostEntity,newPostEntity);
+
+        return postFactory.entityToResponseDto(newPostEntity);
     }
 
     public Page<PostResponseDto> getPageable(Pageable pageable) {
@@ -61,5 +70,9 @@ public class PostService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(list);
+    }
+    private void updateParentPost(PostEntity parent, PostEntity subPost){
+        if(parent == null) return;
+        parent.getSubPosts().add(subPost);
     }
 }

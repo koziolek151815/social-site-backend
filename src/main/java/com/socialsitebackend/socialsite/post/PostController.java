@@ -34,10 +34,10 @@ public class PostController {
 
 
     @RequestMapping(method = RequestMethod.POST)
-    ResponseEntity<PostResponseDto> createPost(@RequestBody AddPostDto dto) {
+    ResponseEntity<PostResponseDto> createPost(@RequestParam(required = false) Long parentPostId, @RequestBody AddPostDto dto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(postService.createPost(dto));
+                .body(postService.createPost(dto, parentPostId));
     }
 
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
