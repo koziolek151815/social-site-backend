@@ -52,6 +52,12 @@ public class PostService {
                 .orElseThrow(() -> new PostNotFoundException(postId));
     }
 
+
+    public PostEntity getPostEntityById(Long postId){
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+    }
+
     @Transactional
     public PostResponseDto createPost(AddPostDto dto, Long parentPostId) {
         UserEntity user = userService.getCurrentUser();
@@ -63,14 +69,26 @@ public class PostService {
         return postFactory.entityToResponseDto(newPostEntity);
     }
 
-    public Page<PostResponseDto> getPageable(Pageable pageable) {
-        List<PostResponseDto> list = postRepository.findAll(pageable)
+    public Page<PostResponseDto> getFrontPage(Pageable pageable) {
+        List<PostResponseDto> list = postRepository.findAllByParentPostNull(pageable)
                 .stream()
                 .map(postFactory::entityToResponseDto)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(list);
     }
+
+    public Page<PostResponseDto> getPostReplies(Long postId, Pageable pageable) {
+        PostEntity parentPost = getPostEntityById(postId);
+        List<PostResponseDto> list = postRepository.findAllByParentPostEquals(parentPost, pageable)
+                .stream()
+                .map(postFactory::entityToResponseDto)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(list);
+    }
+
+
     private void updateParentPost(PostEntity parent, PostEntity subPost){
         if(parent == null) return;
         parent.getSubPosts().add(subPost);

@@ -32,7 +32,6 @@ public class PostController {
 
     private final PostService postService;
 
-
     @RequestMapping(method = RequestMethod.POST)
     ResponseEntity<PostResponseDto> createPost(@RequestParam(required = false) Long parentPostId, @RequestBody AddPostDto dto) {
         return ResponseEntity
@@ -64,14 +63,25 @@ public class PostController {
         }
     }
 
-    @RequestMapping(value = "/getPage", method = RequestMethod.GET)
-    ResponseEntity<Page<PostResponseDto>> getPageable(
+    @RequestMapping(value = "/getFrontPage", method = RequestMethod.GET)
+    ResponseEntity<Page<PostResponseDto>> getFrontPage(
             @PageableDefault()
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "postCreatedDate", direction = Sort.Direction.DESC)
             }) Pageable pageable) {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(postService.getPageable(pageable));
+                .body(postService.getFrontPage(pageable));
+    }
+
+    @RequestMapping(value = "/getPostReplies", method = RequestMethod.GET)
+    ResponseEntity<Page<PostResponseDto>> getPostReplies(@RequestParam Long postId,
+            @PageableDefault()
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "postCreatedDate", direction = Sort.Direction.DESC)
+            }) Pageable pageable) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(postService.getPostReplies(postId, pageable));
     }
 }
