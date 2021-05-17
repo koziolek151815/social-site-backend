@@ -2,6 +2,7 @@ package com.socialsitebackend.socialsite.post;
 
 import com.socialsitebackend.socialsite.entities.PostEntity;
 
+import com.socialsitebackend.socialsite.entities.UserEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

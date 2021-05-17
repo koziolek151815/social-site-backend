@@ -74,6 +74,15 @@ public class PostService {
         return postFactory.entityToResponseDto(newPostEntity);
     }
 
+    public Page<PostResponseDto> getFrontPage(Pageable pageable) {
+        List<PostResponseDto> list = postRepository.findAllByParentPostNull(pageable)
+                .stream()
+                .map(postFactory::entityToResponseDto)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(list);
+    }
+
     public Page<PostResponseDto> getPostReplies(Long postId, Pageable pageable) {
         PostEntity parentPost = getPostEntityById(postId);
         List<PostResponseDto> list = postRepository.findAllByParentPostEquals(parentPost, pageable)

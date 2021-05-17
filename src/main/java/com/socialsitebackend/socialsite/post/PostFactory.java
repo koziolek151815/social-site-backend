@@ -33,7 +33,7 @@ public class PostFactory {
                 .build();
     }
 
-    public PostEntity addPostDtoToEntity(AddPostDto dto, UserEntity postAuthor) {
+    public PostEntity addPostDtoToEntity(AddPostDto dto, UserEntity postAuthor, PostEntity parentPost) {
         return PostEntity.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())
