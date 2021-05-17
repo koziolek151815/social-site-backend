@@ -4,14 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Cascade;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 @Builder
@@ -37,11 +41,7 @@ public class PostEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private UserEntity author;
 
-    @ElementCollection(fetch=FetchType.EAGER)
-    @CollectionTable(name = "votes")
-    @MapKeyJoinColumn(name = "user_id")
-    @JoinColumn(name = "post_id")
-    @Column(name = "vote_type")
-    Map<UserEntity, Boolean> votes;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Vote> votes;
 
 }

@@ -76,7 +76,7 @@ public class PostController {
                 .body(postService.getPageable(pageable));
     }
 
-    @RequestMapping(value = "/getById", method = RequestMethod.POST)
+    @RequestMapping(value = "/vote", method = RequestMethod.POST)
     ResponseEntity<?> votePostById(@RequestParam Long postId, @Valid @RequestBody PostVoteDto postVoteDto) {
         try {
             return ResponseEntity

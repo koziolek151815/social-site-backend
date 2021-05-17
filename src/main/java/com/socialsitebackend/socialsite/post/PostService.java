@@ -2,6 +2,7 @@ package com.socialsitebackend.socialsite.post;
 
 import com.socialsitebackend.socialsite.entities.PostEntity;
 import com.socialsitebackend.socialsite.entities.UserEntity;
+import com.socialsitebackend.socialsite.entities.Vote;
 import com.socialsitebackend.socialsite.exceptions.PostNotFoundException;
 import com.socialsitebackend.socialsite.post.dto.AddPostDto;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -73,16 +75,29 @@ public class PostService {
 
         UserEntity user = userService.getCurrentUser();
 
-        Map<UserEntity, Boolean> votesMap = post.getVotes();
+        Vote voteEntity = Vote.builder()
+                .user(user)
+                .post(post)
+                .rating(vote.getVote())
+                .build();
 
-        if (votesMap.containsKey(user))
-            if (votesMap.get(user).equals(vote.getVote()))
-                votesMap.remove(user);
-            else
-                votesMap.put(user, vote.getVote());
-        else
-            votesMap.put(user, vote.getVote());
+        List<Vote> voteList = post.getVotes();
 
+        Optional<Vote> voteOptional = voteList
+                .stream()
+                .filter(x -> x.getUser().getId().equals(user.getId())).findFirst();
+
+        if (voteOptional.isPresent()) {
+            Vote oldVote = voteOptional.get();
+            if (oldVote.getRating().equals(vote.getVote())) {
+                voteList.remove(oldVote);
+                oldVote.setPost(null);
+                oldVote.setUser(null);
+            } else {
+                oldVote.setRating(vote.getVote());
+            }
+        } else
+            voteList.add(voteEntity);
 
         return postFactory.entityToResponseDto(postRepository.save(post));
     }
