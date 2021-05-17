@@ -2,9 +2,12 @@ package com.socialsitebackend.socialsite.post;
 
 import com.socialsitebackend.socialsite.entities.PostEntity;
 import com.socialsitebackend.socialsite.entities.UserEntity;
+import com.socialsitebackend.socialsite.entities.Vote;
 import com.socialsitebackend.socialsite.exceptions.PostNotFoundException;
 import com.socialsitebackend.socialsite.post.dto.AddPostDto;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
+import com.socialsitebackend.socialsite.post.dto.PostVoteDto;
+import com.socialsitebackend.socialsite.user.UserRepository;
 import com.socialsitebackend.socialsite.user.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -61,5 +66,39 @@ public class PostService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(list);
+    }
+
+    @Transactional
+    public PostResponseDto addVote(Long postId, PostVoteDto vote) {
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+
+        UserEntity user = userService.getCurrentUser();
+
+        Vote voteEntity = Vote.builder()
+                .user(user)
+                .post(post)
+                .rating(vote.getVote())
+                .build();
+
+        List<Vote> voteList = post.getVotes();
+
+        Optional<Vote> voteOptional = voteList
+                .stream()
+                .filter(x -> x.getUser().getId().equals(user.getId())).findFirst();
+
+        if (voteOptional.isPresent()) {
+            Vote oldVote = voteOptional.get();
+            if (oldVote.getRating().equals(vote.getVote())) {
+                voteList.remove(oldVote);
+                oldVote.setPost(null);
+                oldVote.setUser(null);
+            } else {
+                oldVote.setRating(vote.getVote());
+            }
+        } else
+            voteList.add(voteEntity);
+
+        return postFactory.entityToResponseDto(postRepository.save(post));
     }
 }

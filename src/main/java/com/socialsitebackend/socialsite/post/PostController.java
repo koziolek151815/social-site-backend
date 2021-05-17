@@ -5,6 +5,7 @@ import com.socialsitebackend.socialsite.exceptions.PostNotFoundException;
 import com.socialsitebackend.socialsite.post.dto.AddPostDto;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
 
+import com.socialsitebackend.socialsite.post.dto.PostVoteDto;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -31,7 +33,6 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
-
 
     @RequestMapping(method = RequestMethod.POST)
     ResponseEntity<PostResponseDto> createPost(@RequestBody AddPostDto dto) {
@@ -73,5 +74,22 @@ public class PostController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(postService.getPageable(pageable));
+    }
+
+    @RequestMapping(value = "/vote", method = RequestMethod.POST)
+    ResponseEntity<?> votePostById(@RequestParam Long postId, @Valid @RequestBody PostVoteDto postVoteDto) {
+        try {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(postService.addVote(postId, postVoteDto));
+        } catch (PostNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
     }
 }
