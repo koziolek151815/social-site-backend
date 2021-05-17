@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 @Data
 public class PostResponseDto {
     private Long postId;
+    private int rating;
     private String title;
     private String description;
     private String photoUrl;

@@ -14,4 +14,6 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
     List<PostEntity> findAllByParentPostEquals(PostEntity parentPost, Pageable pageable);
 
     List<PostEntity> findAllByParentPostNull(Pageable pageable);
+
+    List<PostEntity> findAllByVotesContaining(UserEntity user);
 }

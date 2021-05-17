@@ -27,10 +27,13 @@ public class PostFactory {
                 .title(entity.getTitle())
                 .postAuthor(userFactory.entityToBasicUserProfileInfoDto(entity.getAuthor()))
                 .parentPost(this.entityToBasicPostInfoDto(entity.getParentPost()))
+                .rating(entity.getVotes() == null
+                        ? 0
+                        : entity.getVotes().stream().map(vote -> vote.getRating() ? 1 : -1).reduce(0, Integer::sum))
                 .build();
     }
 
-    public PostEntity addPostDtoToEntity(AddPostDto dto, UserEntity postAuthor, PostEntity parentPost) {
+    public PostEntity addPostDtoToEntity(AddPostDto dto, UserEntity postAuthor) {
         return PostEntity.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())

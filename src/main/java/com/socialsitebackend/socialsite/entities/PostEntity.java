@@ -1,12 +1,17 @@
 package com.socialsitebackend.socialsite.entities;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 
 @Builder
@@ -32,6 +37,9 @@ public class PostEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private UserEntity author;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Vote> votes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private PostEntity parentPost;
