@@ -5,6 +5,8 @@ import com.socialsitebackend.socialsite.entities.UserEntity;
 import com.socialsitebackend.socialsite.exceptions.PostNotFoundException;
 import com.socialsitebackend.socialsite.post.dto.AddPostDto;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
+import com.socialsitebackend.socialsite.post.dto.PostVoteDto;
+import com.socialsitebackend.socialsite.user.UserRepository;
 import com.socialsitebackend.socialsite.user.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -61,5 +64,26 @@ public class PostService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(list);
+    }
+
+    @Transactional
+    public PostResponseDto addVote(Long postId, PostVoteDto vote) {
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+
+        UserEntity user = userService.getCurrentUser();
+
+        Map<UserEntity, Boolean> votesMap = post.getVotes();
+
+        if (votesMap.containsKey(user))
+            if (votesMap.get(user).equals(vote.getVote()))
+                votesMap.remove(user);
+            else
+                votesMap.put(user, vote.getVote());
+        else
+            votesMap.put(user, vote.getVote());
+
+
+        return postFactory.entityToResponseDto(postRepository.save(post));
     }
 }
