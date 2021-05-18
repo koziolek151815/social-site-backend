@@ -164,6 +164,7 @@ public class PostService {
         if (!directory.exists()) {
             directory.mkdir();
         }
+    }
       
     public int getUserVote(Long postId, Long userId) {
         PostEntity post = postRepository.findById(postId)
