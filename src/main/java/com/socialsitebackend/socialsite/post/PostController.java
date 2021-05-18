@@ -83,7 +83,7 @@ public class PostController {
     ResponseEntity<Page<PostResponseDto>> getPostReplies(@RequestParam Long postId,
             @PageableDefault()
             @SortDefault.SortDefaults({
-                    @SortDefault(sort = "postCreatedDate", direction = Sort.Direction.DESC)
+                    @SortDefault(sort = "postCreatedDate", direction = Sort.Direction.ASC)
             }) Pageable pageable) {
         return ResponseEntity
                 .status(HttpStatus.OK)

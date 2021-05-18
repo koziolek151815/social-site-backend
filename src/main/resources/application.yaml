@@ -22,3 +22,13 @@ spring:
       ddl-auto: update
     database: POSTGRESQL
     show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+
+#logging:
+#  level:
+#      ROOT: DEBUG
+#    org.springframework.web: DEBUG
