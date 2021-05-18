@@ -4,10 +4,12 @@ import com.socialsitebackend.socialsite.entities.RoleEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 
 @Repository
 public interface RoleRepository extends JpaRepository<RoleEntity, Long> {
 
-    RoleEntity findRoleByName(String name);
+    Optional<RoleEntity> findRoleByName(String name);
 
 }
