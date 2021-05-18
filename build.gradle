@@ -22,7 +22,8 @@ dependencies {
 
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 
-    runtimeOnly group: 'com.h2database', name: 'h2'
+//    runtimeOnly group: 'com.h2database', name: 'h2'
+    implementation 'org.postgresql:postgresql'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
