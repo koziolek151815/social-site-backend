@@ -142,6 +142,7 @@ public class PostService {
         parent.getSubPosts().add(subPost);
     }
 
+
     private String uploadPostPhoto(MultipartFile file) throws IOException {
         if (file == null) {
             throw new FileNotFoundException();
@@ -163,5 +164,25 @@ public class PostService {
         if (!directory.exists()) {
             directory.mkdir();
         }
+      
+    public int getUserVote(Long postId, Long userId) {
+        PostEntity post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+
+        Optional<Vote> vote = post.getVotes()
+                .stream()
+                .filter(x -> x.getUser().getId() == userId)
+                .findFirst();
+
+        //If vote found return 1 for upvote or -1 for downvote
+        if(vote.isPresent())
+            return vote.get().getRating()?1:-1;
+        //Else return 0
+        return 0;
+    }
+
+    public int getCurrentUserVote(Long postId) {
+        return getUserVote(postId, userService.getCurrentUser().getId());
+
     }
 }
