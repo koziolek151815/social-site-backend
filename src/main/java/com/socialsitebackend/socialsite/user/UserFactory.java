@@ -5,6 +5,7 @@ import com.socialsitebackend.socialsite.user.dto.UserBasicProfileInfoDto;
 import com.socialsitebackend.socialsite.user.dto.UserProfileDto;
 import com.socialsitebackend.socialsite.user.dto.UserRegisterRequestDto;
 
+import com.socialsitebackend.socialsite.user.dto.UserRegisterResponseDto;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -39,6 +40,15 @@ public class UserFactory {
                 .gender(entity.getGender())
                 .profileDescription(entity.getProfileDescription())
                 .avatarUrl(entity.getAvatarUrl())
+                .build();
+    }
+
+    public UserRegisterResponseDto entityToRegisterResponseDto(UserEntity entity) {
+        return UserRegisterResponseDto.builder()
+                .id(entity.getId())
+                .email(entity.getEmail())
+                .username(entity.getEmail())
+                .userCreatedDate(entity.getUserCreatedDate())
                 .build();
     }
 

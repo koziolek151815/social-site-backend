@@ -3,6 +3,7 @@ package com.socialsitebackend.socialsite;
 import com.socialsitebackend.socialsite.entities.RoleEntity;
 import com.socialsitebackend.socialsite.entities.UserEntity;
 import com.socialsitebackend.socialsite.role.RoleRepository;
+import com.socialsitebackend.socialsite.role.RoleService;
 import com.socialsitebackend.socialsite.user.UserFactory;
 import com.socialsitebackend.socialsite.user.UserRepository;
 import com.socialsitebackend.socialsite.user.UserService;
@@ -24,22 +25,20 @@ import java.util.Set;
 public class SampleDatabaseLoader implements CommandLineRunner {
 
     private final UserRepository userRepository;
-    private final UserService userService;
-    private final RoleRepository roleRepository;
-    private final UserFactory userFactory;
+    private final RoleService roleService;
     private final BCryptPasswordEncoder bcryptEncoder;
 
     public void run(String... strings) {
-        RoleEntity roleEntity = RoleEntity.builder()
-                .id(1)
-                .name("admin")
-                .description("test")
-                .build();
+        userRepository.deleteUserEntityByUsername("test");
 
-        roleRepository.save(roleEntity);
+
+        RoleEntity adminRole = roleService.getAdminRole();
+        RoleEntity userRole = roleService.getUserRole();
+
 
         Set<RoleEntity> roleEntitySet = new HashSet<>();
-        roleEntitySet.add(roleEntity);
+        roleEntitySet.add(adminRole);
+        roleEntitySet.add(userRole);
 
         UserEntity user = UserEntity.builder()
                 .id(1L)
@@ -50,18 +49,10 @@ public class SampleDatabaseLoader implements CommandLineRunner {
                 .password(bcryptEncoder.encode("test"))
                 .build();
 
-/*        UserRegisterRequestDto userRegisterRequestDto = UserRegisterRequestDto.builder()
-                .email("test@test.com")
-                .username("Test")
-                .avatarUrl("test")
-                .gender("test")
-                .password("test")
-                .build();
-
-        UserEntity user = userService.save(userRegisterRequestDto);*/
-
         user.setRoles(roleEntitySet);
 
         userRepository.save(user);
     }
+
+
 }

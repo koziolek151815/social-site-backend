@@ -1,10 +1,12 @@
 package com.socialsitebackend.socialsite.user;
 
+import com.socialsitebackend.socialsite.exceptions.EmailAlreadyTakenException;
 import com.socialsitebackend.socialsite.role.RoleService;
 import com.socialsitebackend.socialsite.entities.RoleEntity;
 import com.socialsitebackend.socialsite.entities.UserEntity;
 import com.socialsitebackend.socialsite.user.dto.UserRegisterRequestDto;
 
+import com.socialsitebackend.socialsite.user.dto.UserRegisterResponseDto;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -54,19 +56,23 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException(principal.getUsername()));
     }
 
-    public UserEntity save(UserRegisterRequestDto userRegisterDto) {
+    public UserRegisterResponseDto save(UserRegisterRequestDto userRegisterDto) {
         UserEntity newUser = factory.registeDtorToEntity(userRegisterDto);
+        if(userRepository.existsByEmail(userRegisterDto.getEmail())) {
+            throw new EmailAlreadyTakenException(userRegisterDto.getEmail());
+        }
 
-        RoleEntity role = roleService.findByName("USER");
+
+        RoleEntity role = roleService.getUserRole();
         Set<RoleEntity> roleSet = new HashSet<>();
         roleSet.add(role);
 
         if (newUser.getEmail().split("@")[1].equals("admin.edu")) {
-            role = roleService.findByName("ADMIN");
+            role = roleService.getAdminRole();
             roleSet.add(role);
         }
         newUser.setRoles(roleSet);
 
-        return userRepository.save(newUser);
+        return factory.entityToRegisterResponseDto( userRepository.save(newUser) );
     }
 }
