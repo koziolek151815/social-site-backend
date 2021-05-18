@@ -87,6 +87,23 @@ public class PostController {
                 .body(postService.getPostReplies(postId, pageable));
     }
 
+    @RequestMapping(value = "/getCurrentUserVote", method = RequestMethod.GET)
+    ResponseEntity<?> votePostById(@RequestParam Long postId) {
+        try {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(postService.getCurrentUserVote(postId));
+        } catch (PostNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+    }
+
     @RequestMapping(value = "/vote", method = RequestMethod.POST)
     ResponseEntity<?> votePostById(@RequestParam Long postId, @Valid @RequestBody PostVoteDto postVoteDto) {
         try {
