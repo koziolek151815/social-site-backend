@@ -46,9 +46,15 @@ public class PostController {
 
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     ResponseEntity<List<PostResponseDto>> getAllPosts() {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(postService.getAllPosts());
+        try {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(postService.getAllPosts());
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
     }
 
     @RequestMapping(value = "/getById", method = RequestMethod.GET)
@@ -74,9 +80,19 @@ public class PostController {
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "postCreatedDate", direction = Sort.Direction.DESC)
             }) Pageable pageable) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(postService.getFrontPage(pageable));
+        try {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(postService.getFrontPage(pageable));
+        } catch (PostNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
     }
 
     @RequestMapping(value = "/getPostReplies", method = RequestMethod.GET)
@@ -85,9 +101,20 @@ public class PostController {
             @SortDefault.SortDefaults({
                     @SortDefault(sort = "postCreatedDate", direction = Sort.Direction.ASC)
             }) Pageable pageable) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(postService.getPostReplies(postId, pageable));
+        try {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(postService.getPostReplies(postId, pageable));
+        } catch (PostNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+
     }
 
     @RequestMapping(value = "/getCurrentUserVote", method = RequestMethod.GET)
@@ -113,6 +140,23 @@ public class PostController {
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(postService.addVote(postId, postVoteDto));
+        } catch (PostNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+    }
+
+    @RequestMapping(value= "/getPhoto", method = RequestMethod.GET)
+    ResponseEntity<byte[]> getPhoto(@RequestParam Long postId) {
+        try {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(postService.getPhotobytesByPostId(postId));
         } catch (PostNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)

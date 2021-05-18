@@ -15,7 +15,7 @@ public class PostResponseDto {
     private int rating;
     private String title;
     private String description;
-    private String photoUrl;
+    private String postPhotoName;
     private LocalDateTime postCreatedDate;
     private UserBasicProfileInfoDto postAuthor;
     private BasicPostInfoDto parentPost;

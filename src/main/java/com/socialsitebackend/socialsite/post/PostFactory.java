@@ -22,7 +22,7 @@ public class PostFactory {
         return PostResponseDto.builder()
                 .postId(entity.getId())
                 .description(entity.getDescription())
-                .photoUrl(entity.getPostPhotoName())
+                .postPhotoName(entity.getPostPhotoName())
                 .postCreatedDate(entity.getPostCreatedDate())
                 .title(entity.getTitle())
                 .postAuthor(userFactory.entityToBasicUserProfileInfoDto(entity.getAuthor()))
