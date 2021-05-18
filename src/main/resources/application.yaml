@@ -14,14 +14,11 @@ server:
 
 spring:
   datasource:
-    driver-class-name: org.h2.Driver
-    password: ''
-    url: jdbc:h2:file:~/pz-social
-    username: sa
-  h2:
-    console:
-      enabled: true
-      path: /h2
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://localhost:5429/postgres
   jpa:
     hibernate:
       ddl-auto: update
+    database: POSTGRESQL
+    show-sql: true
