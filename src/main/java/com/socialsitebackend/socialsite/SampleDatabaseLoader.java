@@ -37,11 +37,8 @@ public class SampleDatabaseLoader implements CommandLineRunner {
 
 
         Set<RoleEntity> roleEntitySet = new HashSet<>();
-        roleEntitySet.add(adminRole);
-        roleEntitySet.add(userRole);
 
         UserEntity user = UserEntity.builder()
-                .id(1L)
                 .username("test")
                 .email("test@test.com")
                 .avatarUrl("test")
