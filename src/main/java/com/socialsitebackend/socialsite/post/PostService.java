@@ -51,16 +51,41 @@ public class PostService {
         );
     }
 
-    @Transactional
-    public PostResponseDto createPost(AddPostDto dto) {
-        UserEntity user = userService.getCurrentUser();
-        PostEntity postEntity = postRepository.save(postFactory.addPostDtoToEntity(dto, user));
-
-        return postFactory.entityToResponseDto(postEntity);
+    public PostEntity getParentPostEntityById(Long postId){
+        if(postId == null) {return null;}
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
     }
 
-    public Page<PostResponseDto> getPageable(Pageable pageable) {
-        List<PostResponseDto> list = postRepository.findAll(pageable)
+
+    public PostEntity getPostEntityById(Long postId){
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+    }
+
+    @Transactional
+    public PostResponseDto createPost(AddPostDto dto, Long parentPostId) {
+        UserEntity user = userService.getCurrentUser();
+        PostEntity parentPostEntity = getParentPostEntityById(parentPostId);
+
+        PostEntity newPostEntity = postRepository.save(postFactory.addPostDtoToEntity(dto, user, parentPostEntity));
+        updateParentPost(parentPostEntity,newPostEntity);
+
+        return postFactory.entityToResponseDto(newPostEntity);
+    }
+
+    public Page<PostResponseDto> getFrontPage(Pageable pageable) {
+        List<PostResponseDto> list = postRepository.findAllByParentPostNull(pageable)
+                .stream()
+                .map(postFactory::entityToResponseDto)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(list);
+    }
+
+    public Page<PostResponseDto> getPostReplies(Long postId, Pageable pageable) {
+        PostEntity parentPost = getPostEntityById(postId);
+        List<PostResponseDto> list = postRepository.findAllByParentPostEquals(parentPost, pageable)
                 .stream()
                 .map(postFactory::entityToResponseDto)
                 .collect(Collectors.toList());
@@ -100,5 +125,11 @@ public class PostService {
             voteList.add(voteEntity);
 
         return postFactory.entityToResponseDto(postRepository.save(post));
+    }
+
+
+    private void updateParentPost(PostEntity parent, PostEntity subPost){
+        if(parent == null) return;
+        parent.getSubPosts().add(subPost);
     }
 }
