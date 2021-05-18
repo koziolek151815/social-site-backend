@@ -2,10 +2,12 @@ package com.socialsitebackend.socialsite.user;
 
 import com.socialsitebackend.socialsite.entities.UserEntity;
 import com.socialsitebackend.socialsite.config.security.TokenProvider;
+import com.socialsitebackend.socialsite.exceptions.EmailAlreadyTakenException;
 import com.socialsitebackend.socialsite.user.dto.AuthToken;
 import com.socialsitebackend.socialsite.user.dto.UserLoginRequestDto;
 import com.socialsitebackend.socialsite.user.dto.UserRegisterRequestDto;
 
+import com.socialsitebackend.socialsite.user.dto.UserRegisterResponseDto;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
@@ -62,8 +64,20 @@ public class UserController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public UserEntity saveUser(@RequestBody UserRegisterRequestDto user) {
-        return userService.save(user);
+    public ResponseEntity<UserRegisterResponseDto> saveUser(@RequestBody UserRegisterRequestDto user) {
+        try{
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(userService.save(user));
+        } catch (EmailAlreadyTakenException e) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .build();
+        }catch (Exception e){
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")

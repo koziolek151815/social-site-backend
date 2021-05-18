@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 @Builder
 @Data
 public class PostResponseDto {
-
     private Long postId;
     private int rating;
     private String title;
@@ -19,5 +18,5 @@ public class PostResponseDto {
     private String photoUrl;
     private LocalDateTime postCreatedDate;
     private UserBasicProfileInfoDto postAuthor;
-
+    private BasicPostInfoDto parentPost;
 }
