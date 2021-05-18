@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -179,6 +180,20 @@ public class PostService {
 
     public int getCurrentUserVote(Long postId) {
         return getUserVote(postId, userService.getCurrentUser().getId());
+    }
 
+    public byte[] getPhotobytesByPostId(Long postId) throws IOException {
+        PostEntity relatedPost = postRepository
+                .findById(postId)
+                .orElseThrow(() -> new PostNotFoundException(postId));
+
+        String photoName = relatedPost.getPostPhotoName();
+
+        Path currentDir = Paths.get(".");
+        String imageDirectory = currentDir.toAbsolutePath() + "/photos/";
+        Path fileNamePath = Paths.get(imageDirectory, photoName);
+
+        byte[] photo = Files.readAllBytes(fileNamePath);
+        return Base64.getEncoder().encode(photo);
     }
 }
