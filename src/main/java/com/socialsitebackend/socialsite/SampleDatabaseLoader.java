@@ -29,26 +29,32 @@ public class SampleDatabaseLoader implements CommandLineRunner {
     private final BCryptPasswordEncoder bcryptEncoder;
 
     public void run(String... strings) {
-        userRepository.deleteUserEntityByUsername("test");
 
+
+        UserEntity testUser = getTestUser();
 
         RoleEntity adminRole = roleService.getAdminRole();
         RoleEntity userRole = roleService.getUserRole();
 
-
         Set<RoleEntity> roleEntitySet = new HashSet<>();
+        roleEntitySet.add(adminRole);
+        roleEntitySet.add(userRole);
 
-        UserEntity user = UserEntity.builder()
-                .username("test")
-                .email("test@test.com")
-                .avatarUrl("test")
-                .gender("test")
-                .password(bcryptEncoder.encode("test"))
-                .build();
+        testUser.setRoles(roleEntitySet);
 
-        user.setRoles(roleEntitySet);
+        userRepository.save(testUser);
+    }
 
-        userRepository.save(user);
+    private UserEntity getTestUser(){
+        return userRepository.findByEmail("test@test.com").orElse(
+                UserEntity.builder()
+                        .username("test")
+                        .email("test@test.com")
+                        .avatarUrl("test")
+                        .gender("test")
+                        .password(bcryptEncoder.encode("test"))
+                        .build()
+        );
     }
 
 

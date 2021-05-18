@@ -25,8 +25,8 @@ public class PostEntity {
     private String title;
     private String description;
 
-    @Column(name = "photo_url")
-    private String photoUrl;
+    @Column(name = "post_photo_name")
+    private String postPhotoName;
 
     @Column(name = "post_created_date")
     private LocalDateTime postCreatedDate;

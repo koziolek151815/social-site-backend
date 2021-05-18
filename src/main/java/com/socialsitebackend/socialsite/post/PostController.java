@@ -14,13 +14,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -34,11 +30,18 @@ public class PostController {
 
     private final PostService postService;
 
-    @RequestMapping(method = RequestMethod.POST)
-    ResponseEntity<PostResponseDto> createPost(@RequestParam(required = false) Long parentPostId, @RequestBody AddPostDto dto) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(postService.createPost(dto, parentPostId));
+    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<PostResponseDto> createPost(@RequestParam(required = false) Long parentPostId, @ModelAttribute AddPostDto dto) {
+        try{
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(postService.createPost(dto, parentPostId));
+        } catch (Exception e){
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+
     }
 
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)

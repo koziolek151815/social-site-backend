@@ -17,7 +17,14 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -64,9 +71,11 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto createPost(AddPostDto dto, Long parentPostId) {
+    public PostResponseDto createPost(AddPostDto dto, Long parentPostId) throws IOException{
         UserEntity user = userService.getCurrentUser();
         PostEntity parentPostEntity = getParentPostEntityById(parentPostId);
+
+        uploadPostPhoto(dto.getPostPhoto());
 
         PostEntity newPostEntity = postRepository.save(postFactory.addPostDtoToEntity(dto, user, parentPostEntity));
         updateParentPost(parentPostEntity,newPostEntity);
@@ -131,5 +140,28 @@ public class PostService {
     private void updateParentPost(PostEntity parent, PostEntity subPost){
         if(parent == null) return;
         parent.getSubPosts().add(subPost);
+    }
+
+    private String uploadPostPhoto(MultipartFile file) throws IOException {
+        if (file == null) {
+            throw new FileNotFoundException();
+        }
+        String originalName = file.getOriginalFilename();
+
+        Path currentDir = Paths.get(".");
+        String imageDirectory = currentDir.toAbsolutePath() + "/photos/";
+        makeDirectoryIfNotExist(imageDirectory);
+
+        Path fileNamePath = Paths.get(imageDirectory, originalName);
+        Files.write(fileNamePath, file.getBytes());
+
+        return originalName;
+    }
+
+    private void makeDirectoryIfNotExist(String imageDirectory) {
+        File directory = new File(imageDirectory);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
     }
 }
