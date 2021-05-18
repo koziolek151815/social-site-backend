@@ -7,7 +7,6 @@ import com.socialsitebackend.socialsite.exceptions.PostNotFoundException;
 import com.socialsitebackend.socialsite.post.dto.AddPostDto;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
 import com.socialsitebackend.socialsite.post.dto.PostVoteDto;
-import com.socialsitebackend.socialsite.user.UserRepository;
 import com.socialsitebackend.socialsite.user.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,13 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -75,7 +72,7 @@ public class PostService {
         UserEntity user = userService.getCurrentUser();
         PostEntity parentPostEntity = getParentPostEntityById(parentPostId);
 
-        uploadPostPhoto(dto.getPostPhoto());
+        uploadPostPhotoIfExists(dto.getPostPhoto());
 
         PostEntity newPostEntity = postRepository.save(postFactory.addPostDtoToEntity(dto, user, parentPostEntity));
         updateParentPost(parentPostEntity,newPostEntity);
@@ -143,9 +140,9 @@ public class PostService {
     }
 
 
-    private String uploadPostPhoto(MultipartFile file) throws IOException {
+    private void uploadPostPhotoIfExists(MultipartFile file) throws IOException {
         if (file == null) {
-            throw new FileNotFoundException();
+            return;
         }
         String originalName = file.getOriginalFilename();
 
@@ -155,8 +152,6 @@ public class PostService {
 
         Path fileNamePath = Paths.get(imageDirectory, originalName);
         Files.write(fileNamePath, file.getBytes());
-
-        return originalName;
     }
 
     private void makeDirectoryIfNotExist(String imageDirectory) {

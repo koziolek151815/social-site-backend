@@ -37,7 +37,7 @@ public class PostFactory {
         return PostEntity.builder()
                 .title(dto.getTitle())
                 .description(dto.getDescription())
-                .postPhotoName(dto.getPostPhoto().getOriginalFilename())
+                .postPhotoName(dto.getPostPhoto() == null ? null : dto.getPostPhoto().getOriginalFilename())
                 .postCreatedDate(LocalDateTime.now())
                 .author(postAuthor)
                 .parentPost(parentPost)
