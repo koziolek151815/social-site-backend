@@ -33,7 +33,7 @@ public class RoleService {
         if(role.isPresent()) return role.get();
 
         RoleEntity newRole = RoleEntity.builder()
-                .id(1)
+                .id(2)
                 .name("admin")
                 .description("test")
                 .build();

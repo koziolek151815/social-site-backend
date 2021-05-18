@@ -16,7 +16,7 @@ spring:
   datasource:
     driver-class-name: org.h2.Driver
     password: ''
-    url: jdbc:h2:file:~/pz-social
+    url: jdbc:h2:file:~/pz-socialv3
     username: sa
   h2:
     console:
@@ -24,4 +24,4 @@ spring:
       path: /h2
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
