@@ -18,7 +18,7 @@ public class TagEntity {
     @GeneratedValue
     private Long id;
 
-    private String text;
+    private String tagName;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tags")
     Set<PostEntity> taggedPosts;
