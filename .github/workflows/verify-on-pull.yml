@@ -2,7 +2,9 @@ name: verify-on-pull
 
 on:
   pull_request:
-    branches: [ master ]
+    branches:
+     - master
+     - development
 
 jobs:
   build:
