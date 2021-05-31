@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Builder
@@ -18,5 +19,6 @@ public class PostResponseDto {
     private String postPhotoName;
     private LocalDateTime postCreatedDate;
     private UserBasicProfileInfoDto postAuthor;
+    private List<String> tags;
     private BasicPostInfoDto parentPost;
 }

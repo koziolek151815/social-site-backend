@@ -118,7 +118,7 @@ public class PostController {
     }
 
     @RequestMapping(value = "/getCurrentUserVote", method = RequestMethod.GET)
-    ResponseEntity<?> votePostById(@RequestParam Long postId) {
+    ResponseEntity<?> getCurrentUserVote(@RequestParam Long postId) {
         try {
             return ResponseEntity
                     .status(HttpStatus.OK)

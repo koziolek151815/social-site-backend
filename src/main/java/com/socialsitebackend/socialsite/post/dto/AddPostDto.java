@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 
 @Builder
 @Data
@@ -13,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 public class AddPostDto {
     private String title;
+    private List<String> tags;
     private String description;
     private MultipartFile postPhoto;
 }

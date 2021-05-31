@@ -40,6 +40,13 @@ public class PostEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private PostEntity parentPost;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "post_tag",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    Set<TagEntity> tags;
+
     @OneToMany(mappedBy = "parentPost")
     private Set<PostEntity> subPosts = new HashSet<>();
 
