@@ -1,12 +1,14 @@
 package com.socialsitebackend.socialsite.post;
 
 import com.socialsitebackend.socialsite.entities.PostEntity;
+import com.socialsitebackend.socialsite.entities.TagEntity;
 import com.socialsitebackend.socialsite.entities.UserEntity;
 import com.socialsitebackend.socialsite.entities.Vote;
 import com.socialsitebackend.socialsite.exceptions.PostNotFoundException;
 import com.socialsitebackend.socialsite.post.dto.AddPostDto;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
 import com.socialsitebackend.socialsite.post.dto.PostVoteDto;
+import com.socialsitebackend.socialsite.tags.TagService;
 import com.socialsitebackend.socialsite.user.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -40,6 +43,8 @@ public class PostService {
     private final PostFactory postFactory;
 
     private final UserService userService;
+
+    private final TagService tagService;
 
 
     public List<PostResponseDto> getAllPosts() {
@@ -75,7 +80,8 @@ public class PostService {
 
         uploadPostPhotoIfExists(dto.getPostPhoto());
 
-        PostEntity newPostEntity = postRepository.save(postFactory.addPostDtoToEntity(dto, user, parentPostEntity));
+        Set<TagEntity> tags = tagService.createOrGetTags(dto.getTags());
+        PostEntity newPostEntity = postRepository.save(postFactory.addPostDtoToEntity(dto, user, parentPostEntity, tags));
         updateParentPost(parentPostEntity,newPostEntity);
 
         return postFactory.entityToResponseDto(newPostEntity);

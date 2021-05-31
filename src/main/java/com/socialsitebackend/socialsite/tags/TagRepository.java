@@ -1,0 +1,14 @@
+package com.socialsitebackend.socialsite.tags;
+
+import com.socialsitebackend.socialsite.entities.TagEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+
+
+@Repository
+public interface TagRepository extends JpaRepository<TagEntity, Long> {
+
+    Optional<TagEntity> getByText(String text);
+}
