@@ -34,7 +34,7 @@ public class PostFactory {
                 .rating(entity.getVotes() == null
                         ? 0
                         : entity.getVotes().stream().map(vote -> vote.getRating() ? 1 : -1).reduce(0, Integer::sum))
-                .tags(entity.getTags().stream().map(tag->tag.getText()).collect(Collectors.toList()))
+                .tags(entity.getTags().stream().map(tag->tag.getTagName()).collect(Collectors.toList()))
                 .build();
     }
 
