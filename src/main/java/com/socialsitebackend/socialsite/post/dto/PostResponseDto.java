@@ -5,7 +5,7 @@ import com.socialsitebackend.socialsite.user.dto.UserBasicProfileInfoDto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -17,7 +17,7 @@ public class PostResponseDto {
     private String title;
     private String description;
     private String postPhotoName;
-    private Instant postCreatedDate;
+    private LocalDateTime postCreatedDate;
     private UserBasicProfileInfoDto postAuthor;
     private List<String> tags;
     private BasicPostInfoDto parentPost;
