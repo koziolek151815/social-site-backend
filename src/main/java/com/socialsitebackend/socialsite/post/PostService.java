@@ -164,7 +164,6 @@ public class PostService {
         return getUserVote(postId, userService.getCurrentUser().getId());
     }
 
-    @Transactional
     public byte[] getPhotobytesByPostId(Long postId){
         PostEntity relatedPost = postRepository
                 .findById(postId)
