@@ -4,7 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +29,7 @@ public class PostEntity {
     private ImageEntity postPhoto;
 
     @Column(name = "post_created_date")
-    private LocalDateTime postCreatedDate;
+    private Instant postCreatedDate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     private UserEntity author;

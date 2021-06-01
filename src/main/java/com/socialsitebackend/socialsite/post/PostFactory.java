@@ -11,7 +11,7 @@ import com.socialsitebackend.socialsite.user.UserFactory;
 
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,7 +45,7 @@ public class PostFactory {
                 .tags(tags)
                 .description(dto.getDescription())
                 .postPhoto(image)
-                .postCreatedDate(LocalDateTime.now())
+                .postCreatedDate(Instant.now())
                 .author(postAuthor)
                 .parentPost(parentPost)
                 .build();

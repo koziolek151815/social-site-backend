@@ -17,7 +17,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +37,7 @@ public class UserEntity {
     private String email;
 
     @Column(name = "user_created_date")
-    private LocalDateTime userCreatedDate;
+    private Instant userCreatedDate;
 
     @Column(name = "avatar_url")
     private String avatarUrl;
@@ -60,6 +60,6 @@ public class UserEntity {
 
     @PrePersist
     void createdAt() {
-        this.userCreatedDate = LocalDateTime.now();
+        this.userCreatedDate = Instant.now();
     }
 }

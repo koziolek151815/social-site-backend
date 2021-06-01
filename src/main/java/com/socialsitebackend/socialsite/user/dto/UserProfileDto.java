@@ -3,7 +3,7 @@ package com.socialsitebackend.socialsite.user.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 
 @Builder
@@ -15,7 +15,7 @@ public class UserProfileDto {
     private String email;
 
 
-    private LocalDateTime userCreatedDate;
+    private Instant userCreatedDate;
     private String avatarUrl;
     private String gender;
     private String profileDescription;

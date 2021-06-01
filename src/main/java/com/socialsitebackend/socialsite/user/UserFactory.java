@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class UserFactory {
                 .email(dto.getEmail())
                 .username(dto.getUsername())
                 .password(bcryptEncoder.encode(dto.getPassword()))
-                .userCreatedDate(LocalDateTime.now())
+                .userCreatedDate(Instant.now())
                 .gender(dto.getGender())
                 .profileDescription(dto.getProfileDescription())
                 .avatarUrl(dto.getAvatarUrl())
