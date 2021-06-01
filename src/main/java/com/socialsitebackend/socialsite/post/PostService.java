@@ -86,7 +86,8 @@ public class PostService {
         if(parentPostEntity != null)
             parentPostEntity.getSubPosts().add(newPostEntity);
 
-        image.setPost(newPostEntity);
+        if(image != null)
+            image.setPost(newPostEntity);
 
         return postFactory.entityToResponseDto(newPostEntity);
     }
