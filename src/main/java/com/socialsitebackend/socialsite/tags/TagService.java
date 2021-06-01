@@ -50,7 +50,8 @@ public class TagService {
         Optional<TagEntity> tagEntity = tagRepository.getByTagName(tagName);
 
         //If tag doesn't exist return empty pageable
-        if(!tagEntity.isPresent()) new PageImpl<>(new ArrayList<PostResponseDto>());
+        if(!tagEntity.isPresent()) return new PageImpl<>(new ArrayList<PostResponseDto>());
+
         //Else take all posts that aren't comments and return a pageable containing them
         List<PostResponseDto> list = postRepository.findAllByTagsContainingAndParentPostNull(tagEntity.get(),pageable)
                 .stream()
