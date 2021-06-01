@@ -1,5 +1,6 @@
 package com.socialsitebackend.socialsite.post;
 
+import com.socialsitebackend.socialsite.entities.ImageEntity;
 import com.socialsitebackend.socialsite.entities.PostEntity;
 import com.socialsitebackend.socialsite.entities.TagEntity;
 import com.socialsitebackend.socialsite.entities.UserEntity;
@@ -26,7 +27,7 @@ public class PostFactory {
         return PostResponseDto.builder()
                 .postId(entity.getId())
                 .description(entity.getDescription())
-                .postPhotoName(entity.getPostPhotoName())
+                .postPhotoName(entity.getPostPhoto()==null?null:entity.getPostPhoto().getOriginalFilename())
                 .postCreatedDate(entity.getPostCreatedDate())
                 .title(entity.getTitle())
                 .postAuthor(userFactory.entityToBasicUserProfileInfoDto(entity.getAuthor()))
@@ -38,12 +39,12 @@ public class PostFactory {
                 .build();
     }
 
-    public PostEntity addPostDtoToEntity(AddPostDto dto, UserEntity postAuthor, PostEntity parentPost, Set<TagEntity> tags) {
+    public PostEntity addPostDtoToEntity(AddPostDto dto, UserEntity postAuthor, PostEntity parentPost, Set<TagEntity> tags, ImageEntity image) {
         return PostEntity.builder()
                 .title(dto.getTitle())
                 .tags(tags)
                 .description(dto.getDescription())
-                .postPhotoName(dto.getPostPhoto() == null ? null : dto.getPostPhoto().getOriginalFilename())
+                .postPhoto(image)
                 .postCreatedDate(LocalDateTime.now())
                 .author(postAuthor)
                 .parentPost(parentPost)
