@@ -1,10 +1,9 @@
 package com.socialsitebackend.socialsite.post;
 
-import com.socialsitebackend.socialsite.entities.PostEntity;
-import com.socialsitebackend.socialsite.entities.TagEntity;
-import com.socialsitebackend.socialsite.entities.UserEntity;
-import com.socialsitebackend.socialsite.entities.Vote;
+import com.socialsitebackend.socialsite.entities.*;
 import com.socialsitebackend.socialsite.exceptions.PostNotFoundException;
+import com.socialsitebackend.socialsite.image.ImageRepository;
+import com.socialsitebackend.socialsite.image.ImageService;
 import com.socialsitebackend.socialsite.post.dto.AddPostDto;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
 import com.socialsitebackend.socialsite.post.dto.PostVoteDto;
@@ -43,8 +42,8 @@ public class PostService {
     private final PostFactory postFactory;
 
     private final UserService userService;
-
     private final TagService tagService;
+    private final ImageService imageService;
 
 
     public List<PostResponseDto> getAllPosts() {
@@ -78,11 +77,16 @@ public class PostService {
         UserEntity user = userService.getCurrentUser();
         PostEntity parentPostEntity = getParentPostEntityById(parentPostId);
 
-        uploadPostPhotoIfExists(dto.getPostPhoto());
 
         Set<TagEntity> tags = tagService.createOrGetTags(dto.getTags());
-        PostEntity newPostEntity = postRepository.save(postFactory.addPostDtoToEntity(dto, user, parentPostEntity, tags));
-        updateParentPost(parentPostEntity,newPostEntity);
+        ImageEntity image = imageService.uploadImage(dto.getPostPhoto());
+
+        PostEntity newPostEntity = postRepository.save(postFactory.addPostDtoToEntity(dto, user, parentPostEntity, tags, image));
+
+        if(parentPostEntity != null)
+            parentPostEntity.getSubPosts().add(newPostEntity);
+
+        image.setPost(newPostEntity);
 
         return postFactory.entityToResponseDto(newPostEntity);
     }
@@ -139,34 +143,6 @@ public class PostService {
 
         return postFactory.entityToResponseDto(postRepository.save(post));
     }
-
-
-    private void updateParentPost(PostEntity parent, PostEntity subPost){
-        if(parent == null) return;
-        parent.getSubPosts().add(subPost);
-    }
-
-
-    private void uploadPostPhotoIfExists(MultipartFile file) throws IOException {
-        if (file == null) {
-            return;
-        }
-        String originalName = file.getOriginalFilename();
-
-        Path currentDir = Paths.get(".");
-        String imageDirectory = currentDir.toAbsolutePath() + "/photos/";
-        makeDirectoryIfNotExist(imageDirectory);
-
-        Path fileNamePath = Paths.get(imageDirectory, originalName);
-        Files.write(fileNamePath, file.getBytes());
-    }
-
-    private void makeDirectoryIfNotExist(String imageDirectory) {
-        File directory = new File(imageDirectory);
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
-    }
       
     public int getUserVote(Long postId, Long userId) {
         PostEntity post = postRepository.findById(postId)
@@ -188,18 +164,17 @@ public class PostService {
         return getUserVote(postId, userService.getCurrentUser().getId());
     }
 
-    public byte[] getPhotobytesByPostId(Long postId) throws IOException {
+    @Transactional
+    public byte[] getPhotobytesByPostId(Long postId){
         PostEntity relatedPost = postRepository
                 .findById(postId)
                 .orElseThrow(() -> new PostNotFoundException(postId));
 
-        String photoName = relatedPost.getPostPhotoName();
+        ImageEntity relatedImage = relatedPost.getPostPhoto();
 
-        Path currentDir = Paths.get(".");
-        String imageDirectory = currentDir.toAbsolutePath() + "/photos/";
-        Path fileNamePath = Paths.get(imageDirectory, photoName);
+        //If post has no image return null
+        if(relatedImage==null)return null;
 
-        byte[] photo = Files.readAllBytes(fileNamePath);
-        return Base64.getEncoder().encode(photo);
+        return Base64.getEncoder().encode(relatedImage.getBytes());
     }
 }

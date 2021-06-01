@@ -25,8 +25,8 @@ public class PostEntity {
     private String title;
     private String description;
 
-    @Column(name = "post_photo_name")
-    private String postPhotoName;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private ImageEntity postPhoto;
 
     @Column(name = "post_created_date")
     private LocalDateTime postCreatedDate;
