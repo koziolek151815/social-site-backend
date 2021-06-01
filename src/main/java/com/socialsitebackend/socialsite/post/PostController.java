@@ -117,6 +117,28 @@ public class PostController {
 
     }
 
+    @RequestMapping(value = "/search/{q}", method = RequestMethod.GET)
+    ResponseEntity<Page<PostResponseDto>> searchPostQuery(
+            @PageableDefault()
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "votes", direction = Sort.Direction.DESC)
+            }) Pageable pageable,@PathVariable String q) {
+        try {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(postService.getSearchResults(q,pageable));
+        } catch (PostNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+    }
+
+
     @RequestMapping(value = "/getCurrentUserVote", method = RequestMethod.GET)
     ResponseEntity<?> getCurrentUserVote(@RequestParam Long postId) {
         try {

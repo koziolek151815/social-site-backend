@@ -2,7 +2,6 @@ package com.socialsitebackend.socialsite.post;
 
 import com.socialsitebackend.socialsite.entities.*;
 import com.socialsitebackend.socialsite.exceptions.PostNotFoundException;
-import com.socialsitebackend.socialsite.image.ImageRepository;
 import com.socialsitebackend.socialsite.image.ImageService;
 import com.socialsitebackend.socialsite.post.dto.AddPostDto;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
@@ -17,17 +16,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -176,5 +167,21 @@ public class PostService {
         if(relatedImage==null)return null;
 
         return Base64.getEncoder().encode(relatedImage.getBytes());
+    }
+
+    public Page<PostResponseDto> getSearchResults(String search, Pageable pageable) {
+
+        List<String> words = Arrays.asList(search.split(" "));
+        List<PostResponseDto> posts = new ArrayList<>();
+
+        for (String word: words ) {
+            posts.addAll( postRepository.findAllByTitleContainingOrDescriptionContaining(word, word, pageable)
+                    .stream()
+                    .map(postFactory::entityToResponseDto)
+                    .collect(Collectors.toList()) );
+        }
+
+        return new PageImpl<>(posts);
+
     }
 }
