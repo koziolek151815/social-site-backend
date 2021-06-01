@@ -5,6 +5,7 @@ import com.socialsitebackend.socialsite.exceptions.TagNotFoundException;
 import com.socialsitebackend.socialsite.post.PostFactory;
 import com.socialsitebackend.socialsite.post.PostRepository;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
+import com.sun.xml.bind.v2.runtime.reflect.Lister;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,45 +32,31 @@ public class TagService {
     {
         Optional<TagEntity> tagEntity = tagRepository.getByTagName(tag);
 
+        //If tag exists return it
         if(tagEntity.isPresent()) return tagEntity.get();
-
+        //Else create new TagEntity
         TagEntity newTagEntity = TagEntity.builder().tagName(tag).build();
-
         return tagRepository.save(newTagEntity);
     }
 
     @Transactional
     public Set<TagEntity> createOrGetTags(List<String> tags)
     {
-        Set<TagEntity> set = new HashSet<TagEntity>();
-
-        if(tags == null) return set;
-
-        for (String tag:tags) {
-            set.add(createOrGetTag(tag));
-        }
-
-        return set;
-    }
-
-    public TagEntity findTag(String tagName) {
-        Optional<TagEntity> tagEntity = tagRepository.getByTagName(tagName);
-
-        if(tagEntity.isPresent()) return tagEntity.get();
-
-        else throw new TagNotFoundException(tagName);
+        if(tags == null) return new HashSet<TagEntity>();
+        return tags.stream().map(this::createOrGetTag).collect(Collectors.toSet());
     }
 
     public Page<PostResponseDto> getTagPage(Pageable pageable, String tagName) {
-        TagEntity tag = findTag(tagName);
+        Optional<TagEntity> tagEntity = tagRepository.getByTagName(tagName);
 
-        List<PostResponseDto> list = postRepository.findAllByTagsContainingAndParentPostNull(tag,pageable)
+        //If tag doesn't exist return empty pageable
+        if(!tagEntity.isPresent()) new PageImpl<>(new ArrayList<PostResponseDto>());
+        //Else take all posts that aren't comments and return a pageable containing them
+        List<PostResponseDto> list = postRepository.findAllByTagsContainingAndParentPostNull(tagEntity.get(),pageable)
                 .stream()
                 .map(postFactory::entityToResponseDto)
                 .collect(Collectors.toList());
 
         return new PageImpl<>(list);
-
-
     }
 }
