@@ -172,16 +172,16 @@ public class PostService {
     public Page<PostResponseDto> getSearchResults(String search, Pageable pageable) {
 
         List<String> words = Arrays.asList(search.split(" "));
-        List<PostResponseDto> posts = new ArrayList<>();
+        Set<PostResponseDto> posts = new HashSet<>();
 
         for (String word: words ) {
-            posts.addAll( postRepository.findAllByTitleContainingOrDescriptionContaining(word, word, pageable)
+            posts.addAll( postRepository.findAllByTitleContainingOrDescriptionContainingAndParentPostNull(word, word, pageable)
                     .stream()
                     .map(postFactory::entityToResponseDto)
-                    .collect(Collectors.toList()) );
+                    .collect(Collectors.toSet()) );
         }
 
-        return new PageImpl<>(posts);
+        return new PageImpl<>(new ArrayList<>(posts));
 
     }
 }
