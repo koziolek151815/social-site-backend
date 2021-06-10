@@ -58,6 +58,8 @@ public class UserEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Vote> votes;
 
+    private Boolean userActive;
+
     @PrePersist
     void createdAt() {
         this.userCreatedDate = Instant.now();

@@ -2,7 +2,7 @@ package com.socialsitebackend.socialsite.user;
 
 import com.socialsitebackend.socialsite.entities.UserEntity;
 import com.socialsitebackend.socialsite.user.dto.UserBasicProfileInfoDto;
-import com.socialsitebackend.socialsite.user.dto.UserProfileDto;
+import com.socialsitebackend.socialsite.userProfile.dto.UserProfileDto;
 import com.socialsitebackend.socialsite.user.dto.UserRegisterRequestDto;
 
 import com.socialsitebackend.socialsite.user.dto.UserRegisterResponseDto;
@@ -25,9 +25,10 @@ public class UserFactory {
                 .username(dto.getUsername())
                 .password(bcryptEncoder.encode(dto.getPassword()))
                 .userCreatedDate(Instant.now())
-                .gender(dto.getGender())
-                .profileDescription(dto.getProfileDescription())
-                .avatarUrl(dto.getAvatarUrl())
+                .gender(dto.getGender() == null ? "" : dto.getGender())
+                .profileDescription(dto.getProfileDescription() == null ? "" : dto.getProfileDescription())
+                .avatarUrl(dto.getAvatarUrl() == null ? "" : dto.getAvatarUrl())
+                .userActive(true)
                 .build();
     }
 
@@ -56,6 +57,7 @@ public class UserFactory {
         return UserBasicProfileInfoDto.builder()
                 .id(entity.getId())
                 .username(entity.getUsername())
+                .userActive(entity.getUserActive())
                 .build();
     }
 }

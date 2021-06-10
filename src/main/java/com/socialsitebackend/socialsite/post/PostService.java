@@ -92,9 +92,29 @@ public class PostService {
         return new PageImpl<>(list);
     }
 
+    public Page<PostResponseDto> getPostsCreatedByUser(Pageable pageable, UserEntity author) {
+
+        List<PostResponseDto> list = postRepository.findAllByParentPostNullAndAuthorEquals(pageable, author)
+                .stream()
+                .map(postFactory::entityToResponseDto)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(list);
+    }
+
     public Page<PostResponseDto> getPostReplies(Long postId, Pageable pageable) {
         PostEntity parentPost = getPostEntityById(postId);
         List<PostResponseDto> list = postRepository.findAllByParentPostEquals(parentPost, pageable)
+                .stream()
+                .map(postFactory::entityToResponseDto)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(list);
+    }
+
+    public Page<PostResponseDto> getCommentsCreatedByUser(Pageable pageable, UserEntity author) {
+
+        List<PostResponseDto> list = postRepository.findAllByParentPostNotNullAndAuthorEquals(pageable, author)
                 .stream()
                 .map(postFactory::entityToResponseDto)
                 .collect(Collectors.toList());
