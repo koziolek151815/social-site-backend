@@ -1,4 +1,4 @@
-package com.socialsitebackend.socialsite.user.dto;
+package com.socialsitebackend.socialsite.userProfile.dto;
 
 import lombok.Builder;
 import lombok.Data;

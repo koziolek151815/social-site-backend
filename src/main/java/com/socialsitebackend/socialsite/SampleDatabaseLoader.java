@@ -47,6 +47,7 @@ public class SampleDatabaseLoader implements CommandLineRunner {
                         .email("test@test.com")
                         .avatarUrl("test")
                         .gender("test")
+                        .userActive(true)
                         .password(bcryptEncoder.encode("test"))
                         .build()
         );
