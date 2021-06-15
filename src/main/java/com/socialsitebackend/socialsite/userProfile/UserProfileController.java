@@ -96,4 +96,25 @@ public class UserProfileController {
                     .build();
         }
     }
+
+    @RequestMapping(value = "/user/votes", method = RequestMethod.GET)
+    ResponseEntity<Page<PostResponseDto>> getPostsAndCommentsVotedByUser(
+            @PageableDefault()
+            @SortDefault.SortDefaults({
+                    @SortDefault(sort = "postCreatedDate", direction = Sort.Direction.DESC)
+            }) Pageable pageable, @RequestParam Long userId) {
+        try {
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(userProfileService.getPostsAndCommentsVotedByUser(pageable, userId));
+        } catch (PostNotFoundException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+    }
 }

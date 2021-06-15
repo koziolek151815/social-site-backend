@@ -2,7 +2,9 @@ package com.socialsitebackend.socialsite.userProfile;
 
 import com.socialsitebackend.socialsite.entities.UserEntity;
 import com.socialsitebackend.socialsite.exceptions.UserNotFoundException;
+import com.socialsitebackend.socialsite.post.PostRepository;
 import com.socialsitebackend.socialsite.post.PostService;
+import com.socialsitebackend.socialsite.post.VoteRepository;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
 import com.socialsitebackend.socialsite.user.UserFactory;
 import com.socialsitebackend.socialsite.user.UserRepository;
@@ -12,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -40,5 +44,9 @@ public class UserProfileService {
         return postService.getCommentsCreatedByUser(pageable, author);
     }
 
+    public Page<PostResponseDto> getPostsAndCommentsVotedByUser(Pageable pageable, Long userId) {
+        UserEntity author = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        return postService.getPostsAndCommentsVotedByUser(pageable, author);
+    }
 
 }
