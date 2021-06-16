@@ -9,6 +9,7 @@ import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
 import com.socialsitebackend.socialsite.user.UserFactory;
 import com.socialsitebackend.socialsite.user.UserRepository;
 import com.socialsitebackend.socialsite.user.UserService;
+import com.socialsitebackend.socialsite.userProfile.dto.UserEditProfileDto;
 import com.socialsitebackend.socialsite.userProfile.dto.UserProfileDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -49,4 +50,13 @@ public class UserProfileService {
         return postService.getPostsAndCommentsVotedByUser(pageable, author);
     }
 
+    public void updateProfile(UserEditProfileDto dto) {
+        UserEntity user = userService.getCurrentUser();
+
+        user.setGender(dto.getGender());
+        user.setProfileDescription(dto.getProfileDescription());
+        user.setUsername(dto.getUsername());
+
+        userRepository.save(user);
+    }
 }

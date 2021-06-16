@@ -3,6 +3,7 @@ package com.socialsitebackend.socialsite.userProfile;
 
 import com.socialsitebackend.socialsite.exceptions.PostNotFoundException;
 import com.socialsitebackend.socialsite.post.dto.PostResponseDto;
+import com.socialsitebackend.socialsite.userProfile.dto.UserEditProfileDto;
 import com.socialsitebackend.socialsite.userProfile.dto.UserProfileDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -110,6 +111,20 @@ public class UserProfileController {
         } catch (PostNotFoundException e) {
             return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
+                    .build();
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+    }
+
+    @RequestMapping(value = "/updateProfile", method = RequestMethod.PUT)
+    ResponseEntity<Void> updateProfile(@RequestBody UserEditProfileDto dto) {
+        try {
+            userProfileService.updateProfile(dto);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
                     .build();
         } catch (Exception e) {
             return ResponseEntity
