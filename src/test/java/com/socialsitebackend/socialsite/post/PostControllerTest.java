@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.transaction.Transactional;
@@ -33,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @SpringBootTest
+@ActiveProfiles("test")
 public class PostControllerTest {
 
     @MockBean
@@ -54,28 +56,6 @@ public class PostControllerTest {
     }
 
     @Test
-    @WithMockUser
-    public void add_post_should_return_created_post() throws Exception {
-        AddPostDto addPostDto = PostSampleGenerator.getSampleAddPostDto();
-
-        PostResponseDto postResponseDto = PostResponseDto.builder()
-                .title(addPostDto.getTitle())
-                .description(addPostDto.getDescription())
-                .photoUrl(addPostDto.getPhotoUrl())
-                .build();
-
-        Mockito.when(postService.createPost(any(AddPostDto.class))).thenReturn(postResponseDto);
-
-        mockMvc.perform(post("/posts")
-                .content(mapper.writeValueAsString(addPostDto))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.title").value(addPostDto.getTitle()))
-                .andExpect(jsonPath("$.description").value(addPostDto.getDescription()))
-                .andExpect(jsonPath("$.photoUrl").value(addPostDto.getPhotoUrl()));
-    }
-
-    @Test
     public void get_single_post_should_be_unauthorized_without_user() throws Exception {
         mockMvc.perform(get("/posts/getById").param("postId", "12345"))
                 .andExpect(status().isUnauthorized());
@@ -93,8 +73,7 @@ public class PostControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.postId").value(postResponseDto.getPostId()))
                 .andExpect(jsonPath("$.title").value(postResponseDto.getTitle()))
-                .andExpect(jsonPath("$.description").value(postResponseDto.getDescription()))
-                .andExpect(jsonPath("$.photoUrl").value(postResponseDto.getPhotoUrl()));
+                .andExpect(jsonPath("$.description").value(postResponseDto.getDescription()));
     }
 
     @Test
@@ -105,7 +84,7 @@ public class PostControllerTest {
 
     @Test
     @WithMockUser
-    public void get_all_posts_shougld_return_posts() throws Exception {
+    public void get_all_posts_should_return_posts() throws Exception {
 
         PostResponseDto[] postResponseDtos = new PostResponseDto[]{
                 PostSampleGenerator.getRandomPostResponseDto(),
@@ -124,10 +103,7 @@ public class PostControllerTest {
                 .andExpect(jsonPath("$[*].title")
                         .value(Matchers.containsInRelativeOrder(postResponseDtoList.stream().map(PostResponseDto::getTitle).toArray())))
                 .andExpect(jsonPath("$[*].description")
-                        .value(Matchers.containsInRelativeOrder(postResponseDtoList.stream().map(PostResponseDto::getDescription).toArray())))
-                .andExpect(jsonPath("$[*].photoUrl")
-                        .value(Matchers.containsInRelativeOrder(postResponseDtoList.stream().map(PostResponseDto::getPhotoUrl).toArray())));
-
+                        .value(Matchers.containsInRelativeOrder(postResponseDtoList.stream().map(PostResponseDto::getDescription).toArray())));
     }
 
     @Test
@@ -142,9 +118,9 @@ public class PostControllerTest {
 
         Page page = Mockito.mock(Page.class);
 
-        Mockito.when(postService.getPageable(any(Pageable.class))).thenReturn(page);
+        Mockito.when(postService.getFrontPage(any(Pageable.class))).thenReturn(page);
 
-        mockMvc.perform(get("/posts/getPage"))
+        mockMvc.perform(get("/posts/getFrontPage"))
                 .andExpect(status().isOk());
     }
 }
