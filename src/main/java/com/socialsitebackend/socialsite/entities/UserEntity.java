@@ -14,9 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 
 
@@ -35,7 +37,7 @@ public class UserEntity {
     private String email;
 
     @Column(name = "user_created_date")
-    private LocalDateTime userCreatedDate;
+    private Instant userCreatedDate;
 
     @Column(name = "avatar_url")
     private String avatarUrl;
@@ -44,7 +46,7 @@ public class UserEntity {
     @Column(name = "profile_description")
     private String profileDescription;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "USER_ROLES",
             joinColumns = {
                     @JoinColumn(name = "USER_ID")
@@ -53,8 +55,13 @@ public class UserEntity {
                     @JoinColumn(name = "ROLE_ID")})
     private Set<RoleEntity> roles;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Vote> votes;
+
+    private Boolean userActive;
+
     @PrePersist
     void createdAt() {
-        this.userCreatedDate = LocalDateTime.now();
+        this.userCreatedDate = Instant.now();
     }
 }

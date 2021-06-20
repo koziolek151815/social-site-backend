@@ -1,10 +1,9 @@
 package com.socialsitebackend.socialsite.user;
 
-import com.socialsitebackend.socialsite.entities.UserEntity;
 import com.socialsitebackend.socialsite.config.security.TokenProvider;
-import com.socialsitebackend.socialsite.user.dto.AuthToken;
-import com.socialsitebackend.socialsite.user.dto.UserLoginRequestDto;
-import com.socialsitebackend.socialsite.user.dto.UserRegisterRequestDto;
+import com.socialsitebackend.socialsite.exceptions.BadCredentialsException;
+import com.socialsitebackend.socialsite.exceptions.EmailAlreadyTakenException;
+import com.socialsitebackend.socialsite.user.dto.*;
 
 import lombok.RequiredArgsConstructor;
 
@@ -62,8 +61,51 @@ public class UserController {
     }
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public UserEntity saveUser(@RequestBody UserRegisterRequestDto user) {
-        return userService.save(user);
+    public ResponseEntity<UserRegisterResponseDto> saveUser(@RequestBody UserRegisterRequestDto user) {
+        try{
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(userService.save(user));
+        } catch (EmailAlreadyTakenException e) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .build();
+        }catch (Exception e){
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+    }
+
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+    public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequestDto changePasswordRequestDto) {
+        try{
+            userService.changePassword(changePasswordRequestDto);
+            return ResponseEntity.ok().build();
+        } catch (BadCredentialsException e) {
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .build();
+        }catch (Exception e){
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+    }
+    @RequestMapping(value = "/deactivateUser", method = RequestMethod.POST)
+    public ResponseEntity<?> deactivateUser(@RequestBody DeactivateUserRequestDto deactivateUserRequestDto) {
+        try{
+            userService.deactivateUser(deactivateUserRequestDto);
+            return ResponseEntity.ok().build();
+        } catch (BadCredentialsException e) {
+            return ResponseEntity
+                    .status(HttpStatus.FORBIDDEN)
+                    .build();
+        }catch (Exception e){
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
     }
 
     @PreAuthorize("hasRole('ADMIN')")

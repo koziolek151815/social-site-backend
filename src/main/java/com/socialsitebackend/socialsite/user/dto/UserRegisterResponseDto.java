@@ -3,13 +3,13 @@ package com.socialsitebackend.socialsite.user.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.Instant;
 
 @Builder
 @Data
-public class UserBasicProfileInfoDto {
-
+public class UserRegisterResponseDto {
     private Long id;
     private String username;
-    private Boolean userActive;
-
+    private String email;
+    private Instant userCreatedDate;
 }
