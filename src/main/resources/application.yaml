@@ -1,0 +1,34 @@
+jwt:
+  authorities:
+    key: roles
+  header:
+    string: Authorization
+  signing:
+    key: signingkey
+  token:
+    prefix: Bearer
+    validity: 18000
+
+server:
+  port: 8081
+
+spring:
+  datasource:
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://localhost:5429/postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database: POSTGRESQL
+    show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 1500KB
+
+
+#logging:
+#  level:
+#      ROOT: DEBUG
+#    org.springframework.web: DEBUG
